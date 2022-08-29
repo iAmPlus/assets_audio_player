@@ -68,7 +68,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener,
         instance = null
     }
 
-    private fun sendNotificationPayloadMessage(intent: Intent): Boolean? {
+    private fun sendNotificationPayloadMessage(intent: Intent): Boolean {
         if (NotificationAction.ACTION_SELECT == intent.action) {
             val trackId = intent.getStringExtra(NotificationService.TRACK_ID)
             notificationChannel?.invokeMethod("selectNotification", trackId)
@@ -77,7 +77,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener,
         return false
     }
 
-    override fun onNewIntent(intent: Intent?): Boolean {
+    override fun onNewIntent(intent: Intent): Boolean {
         if (intent == null)
             return false
 
@@ -91,6 +91,9 @@ class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener,
         }
         return false
     }
+
+
+
 
     override fun onDetachedFromActivity() {
         myActivity = null

@@ -109,10 +109,10 @@ class PlayerImplemExoPlayer(
     private var updater: Runnable = Runnable {
         run {
             fadeOutStep(0.05F)
-            fadeHandler?.postDelayed(updater,250);
+            fadeHandler.postDelayed(updater,250);
             if (volume <= 0f) {
                 cancelFadingOut()
-                fadeHandler?.removeCallbacks(updater);
+                fadeHandler.removeCallbacks(updater);
             }
         }
     }
@@ -213,18 +213,15 @@ class PlayerImplemExoPlayer(
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
 
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    val key = drmConfiguration?.get("clearKey")?.toString()
+                val key = drmConfiguration?.get("clearKey")?.toString()
 
-                    if (key != null) {
-                        val sessionManager: DrmSessionManager = DefaultDrmSessionManager.Builder().setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER).build(LocalMediaDrmCallback(key.toByteArray()))
-                        factory.setDrmSessionManager(sessionManager)
-                    }
-
+                if (key != null) {
+                    val sessionManager: DrmSessionManager = DefaultDrmSessionManager.Builder().setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER).build(LocalMediaDrmCallback(key.toByteArray()))
+                    factory.setDrmSessionManager(sessionManager)
                 }
 
                 return factory
-                        .createMediaSource(Uri.fromFile(File(assetAudioPath)))
+                        .createMediaSource(Uri.fromFile(assetAudioPath?.let { File(it) }))
             } else { //asset$
                 val p = assetAudioPath!!.replace(" ", "%20")
                 val path = if (assetAudioPackage.isNullOrBlank()) {
@@ -328,6 +325,7 @@ class PlayerImplemExoPlayer(
                     }
                 }
 
+                @Deprecated("Deprecated in Java")
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     if (lastState != playbackState) {
                         when (playbackState) {
